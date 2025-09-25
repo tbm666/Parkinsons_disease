@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Parkinson's Disease Detection with XGBoost + KFold CV + Feature Selection + Visualization
+Parkinson's Disease Detection with XGBoost + KFold CV + Feature Selection + Styled Tables + Visualization
 """
 
 import pandas as pd
@@ -44,7 +44,6 @@ importances = base_model.feature_importances_
 top_indices = importances.argsort()[::-1][:15]
 X_train_selected = X_train[:, top_indices]
 X_test_selected = X_test[:, top_indices]
-
 top_features = X.columns[top_indices].tolist()
 print("Используем признаки:", top_features)
 
@@ -73,15 +72,18 @@ print(f"Точность на тестовой выборке: {test_acc:.4f}")
 
 # 9. Визуализация важности признаков
 plt.figure(figsize=(10,6))
-sns.barplot(x=importances[top_indices], y=top_features)
+sns.barplot(x=importances[top_indices], y=top_features, palette='viridis')
 plt.title("Feature Importance (Top 15)")
 plt.xlabel("Importance")
 plt.ylabel("Feature")
 plt.tight_layout()
 plt.show()
 
-# 10. Матрица ошибок
+# 10. Матрица ошибок в виде таблицы и heatmap
 cm = confusion_matrix(y_test, y_pred)
+cm_df = pd.DataFrame(cm, index=['Healthy','PD'], columns=['Healthy','PD'])
+display(cm_df.style.background_gradient(cmap='Blues').format("{:.0f}"))
+
 plt.figure(figsize=(5,4))
 sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', xticklabels=['Healthy','PD'], yticklabels=['Healthy','PD'])
 plt.xlabel("Predicted")
@@ -90,13 +92,15 @@ plt.title(f"Confusion Matrix (Test Accuracy={test_acc:.2%})")
 plt.tight_layout()
 plt.show()
 
-# 11. Дополнительно: распределение предсказаний
+# 11. Classification report в виде таблицы
+report_dict = classification_report(y_test, y_pred, target_names=['Healthy','PD'], output_dict=True)
+report_df = pd.DataFrame(report_dict).transpose()
+display(report_df.style.background_gradient(cmap='Blues', subset=['precision','recall','f1-score']).format("{:.2f}"))
+
+# 12. Распределение предсказаний
 plt.figure(figsize=(6,4))
-sns.countplot(x=y_pred)
+sns.countplot(x=y_pred, palette='Set2')
 plt.xticks([0,1], ['Healthy','PD'])
 plt.title("Distribution of Predictions on Test Set")
 plt.show()
 
-# 12. Classification report
-print("\n=== Classification Report ===")
-print(classification_report(y_test, y_pred, target_names=['Healthy','PD']))
