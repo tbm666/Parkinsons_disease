@@ -56,5 +56,5 @@ CV Accuracy: 0.9450 ± 0.0321
 ## 📚 Литература
 
 * [UCI Parkinson’s Disease Dataset](https://archive.ics.uci.edu/ml/datasets/parkinsons)
-* [XGBoost Documentation]([https://xgboos](https://xgboos)
+* [XGBoost Documentation](https://xgboost.readthedocs.io/)
 
